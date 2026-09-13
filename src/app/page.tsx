@@ -5,6 +5,7 @@ import { ColorInput } from "@/components/ColorInput";
 import { ContrastResult } from "@/components/ContrastResult";
 import { HeroPreview } from "@/components/HeroPreview";
 import { PreviewPanel } from "@/components/PreviewPanel";
+import { ReadabilityAnalyzer } from "@/components/ReadabilityAnalyzer";
 import { contrastRatio, hexToRgb } from "@/lib/contrast";
 
 const DEFAULT_FOREGROUND = "#FFFFFF";
@@ -86,6 +87,7 @@ export default function Home() {
         </section>
 
         <PreviewPanel foreground={previewForeground} background={previewBackground} />
+        <ReadabilityAnalyzer />
       </div>
     </main>
   );
