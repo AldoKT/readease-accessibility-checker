@@ -6,6 +6,7 @@ import { ColorInput } from "@/components/ColorInput";
 import { ContrastResult } from "@/components/ContrastResult";
 import { ColorVisionSimulator } from "@/components/ColorVisionSimulator";
 import { HeroPreview } from "@/components/HeroPreview";
+import { PaletteChecker } from "@/components/PaletteChecker";
 import { PreviewPanel } from "@/components/PreviewPanel";
 import { ReadabilityAnalyzer } from "@/components/ReadabilityAnalyzer";
 import { contrastRatio, evaluateWcagContrast, hexToRgb } from "@/lib/contrast";
@@ -13,9 +14,16 @@ import { recommendForegroundContrast } from "@/lib/colorRecommendations";
 import { analyzeReadability } from "@/lib/readability";
 import { generateAccessibilityRecommendations } from "@/lib/recommendations";
 import { evaluateSimulatedContrast } from "@/lib/simulatedContrast";
+import type { PaletteColor } from "@/lib/paletteContrast";
 
 const DEFAULT_FOREGROUND = "#FFFFFF";
 const DEFAULT_BACKGROUND = "#18181B";
+const INITIAL_PALETTE: PaletteColor[] = [
+  { id: "palette-1", value: "#18181B" },
+  { id: "palette-2", value: "#FFFFFF" },
+  { id: "palette-3", value: "#888888" },
+];
+let nextPaletteColorId = 4;
 
 function toColorInputValue(value: string) {
   const rgb = hexToRgb(value);
@@ -30,6 +38,7 @@ export default function Home() {
   const [foreground, setForeground] = useState(DEFAULT_FOREGROUND);
   const [background, setBackground] = useState(DEFAULT_BACKGROUND);
   const [text, setText] = useState("");
+  const [palette, setPalette] = useState<PaletteColor[]>(INITIAL_PALETTE);
   const readability = useMemo(() => analyzeReadability(text), [text]);
 
   const foregroundRgb = useMemo(() => hexToRgb(foreground), [foreground]);
@@ -71,6 +80,17 @@ export default function Home() {
   const handleSwap = () => {
     setForeground(background);
     setBackground(foreground);
+  };
+  const handleAddPaletteColor = () => {
+    setPalette((colors) => colors.length >= 6
+      ? colors
+      : [...colors, { id: `palette-${nextPaletteColorId++}`, value: "#888888" }]);
+  };
+  const handleRemovePaletteColor = (id: string) => {
+    setPalette((colors) => colors.length <= 2 ? colors : colors.filter((color) => color.id !== id));
+  };
+  const handleUpdatePaletteColor = (id: string, value: string) => {
+    setPalette((colors) => colors.map((color) => color.id === id ? { ...color, value } : color));
   };
 
   return (
@@ -119,6 +139,7 @@ export default function Home() {
         </section>
 
         <PreviewPanel foreground={previewForeground} background={previewBackground} />
+        <PaletteChecker colors={palette} onAdd={handleAddPaletteColor} onRemove={handleRemovePaletteColor} onUpdate={handleUpdatePaletteColor} />
         <ReadabilityAnalyzer text={text} onTextChange={setText} analysis={readability} />
         <ColorVisionSimulator background={previewBackground} foreground={previewForeground} />
         <AccessibilitySummary recommendations={recommendations} readabilityWords={readability.words} />
