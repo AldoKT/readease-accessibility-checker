@@ -4,9 +4,13 @@ ReadEase is a web-based accessibility evaluation tool designed to help developer
 
 It provides real-time feedback for color contrast, readability, color-vision simulation, and multi-color palette contrast — helping users move from identifying an issue to understanding what they can do next.
 
-## Live Demo
+## Links
 
+**Live Demo:**  
 https://readease-accessibility-checker.vercel.app/
+
+**GitHub Repository:**  
+https://github.com/AldoKT/readease-accessibility-checker
 
 ## Overview
 
@@ -44,10 +48,10 @@ Evaluate multiple colors together instead of checking every combination manually
 
 Users can add between 2 and 6 colors. ReadEase evaluates every unique color pair and categorizes the results as:
 
-- Strong — AAA for normal text
-- Usable — AA for normal text
-- Large text only — AA for large text
-- Needs improvement — insufficient text contrast
+- **Strong** — AAA for normal text
+- **Usable** — AA for normal text
+- **Large text only** — AA for large text
+- **Needs improvement** — insufficient text contrast
 
 A six-color palette produces 15 unique pair evaluations.
 
@@ -226,11 +230,3 @@ Building ReadEase helped me understand accessibility as more than a checklist or
 Implementing the contrast engine gave me a deeper understanding of how sRGB conversion, relative luminance, and contrast ratios work. Developing the recommendation and palette features also showed me that identifying an accessibility problem is only part of the user experience — users also need understandable guidance for resolving it.
 
 The project reinforced the importance of designing accessibility tools that are themselves understandable, keyboard-friendly, responsive, and careful about the limitations of the results they present.
-
-## Links
-
-**Live Demo:**  
-https://readease-accessibility-checker.vercel.app/
-
-**GitHub Repository:**  
-https://github.com/AldoKT/readease-accessibility-checker
