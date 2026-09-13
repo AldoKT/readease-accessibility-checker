@@ -4,6 +4,7 @@ import {
   type ReadabilityAnalysis,
   getGradeLevelInterpretation,
   getReadingEaseInterpretation,
+  hasMinimumReadabilitySample,
 } from "@/lib/readability";
 
 function Stat({ label, value }: { label: string; value: number }) {
@@ -25,6 +26,9 @@ export function ReadabilityAnalyzer({ text, onTextChange, analysis }: Readabilit
 
   const readingEase = getReadingEaseInterpretation(analysis.readingEase);
   const gradeLevel = getGradeLevelInterpretation(analysis.gradeLevel);
+  const hasMinimumSample = hasMinimumReadabilitySample(analysis);
+  const hasCalculatedResults =
+    analysis.readingEase !== null && analysis.gradeLevel !== null;
 
   return (
     <section aria-labelledby="readability-heading" className="mt-20 border-t border-border pt-16 sm:mt-24 sm:pt-20">
@@ -34,13 +38,13 @@ export function ReadabilityAnalyzer({ text, onTextChange, analysis }: Readabilit
         <p className="mt-3 leading-7 text-muted">Paste English text to see how easily it reads and the approximate school grade level needed to understand it.</p>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.8fr)]">
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.8fr)]">
         <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
           <label className="text-sm font-semibold text-foreground" htmlFor="readability-text">Text to analyze</label>
           <p className="mt-2 text-sm leading-6 text-muted" id="readability-help">Analysis updates as you type. Add a few English sentences for the most useful result.</p>
           <textarea
             aria-describedby="readability-help"
-            className="mt-4 min-h-64 w-full resize-y rounded-xl border border-border bg-background p-4 text-base leading-7 text-foreground shadow-sm outline-none transition-colors placeholder:text-muted focus-visible:border-blue-700 focus-visible:ring-3 focus-visible:ring-blue-100"
+            className="mt-4 min-h-64 w-full resize-y rounded-xl border border-muted bg-background p-4 text-base leading-7 text-foreground shadow-sm placeholder:text-muted focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
             id="readability-text"
             onChange={(event) => onTextChange(event.target.value)}
             placeholder="Write or paste text here…"
@@ -49,20 +53,22 @@ export function ReadabilityAnalyzer({ text, onTextChange, analysis }: Readabilit
           <p className="mt-3 text-sm text-muted">Reading Ease estimates how easy text is to read. Grade Level is approximate and based on U.S. school grades.</p>
         </div>
 
-        <div aria-live="polite" className="rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
-          {analysis.readingEase !== null && analysis.gradeLevel !== null ? (
+        <div className="wrap-anywhere rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
+          {hasCalculatedResults && hasMinimumSample ? (
             <>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
                 <section aria-labelledby="reading-ease-result">
                   <p className="text-xs font-semibold tracking-[0.14em] text-muted uppercase">Flesch Reading Ease</p>
-                  <h3 className="mt-2 font-mono text-5xl font-semibold tracking-[-0.04em] text-foreground" id="reading-ease-result">{analysis.readingEase.toFixed(1)}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted">Higher scores generally indicate easier-to-read English text.</p>
+                  <h3 className="mt-2 font-mono text-5xl font-semibold tracking-[-0.04em] text-foreground" id="reading-ease-result">{analysis.readingEase!.toFixed(1)}</h3>
                   <p className="mt-3 font-semibold text-foreground">{readingEase.label}</p>
                   <p className="mt-1 text-sm leading-6 text-muted">{readingEase.description}</p>
                 </section>
 
                 <section className="border-t border-border pt-6" aria-labelledby="grade-level-result">
                   <p className="text-xs font-semibold tracking-[0.14em] text-muted uppercase">Flesch-Kincaid Grade Level</p>
-                  <h3 className="mt-2 font-mono text-5xl font-semibold tracking-[-0.04em] text-foreground" id="grade-level-result">{analysis.gradeLevel.toFixed(1)}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted">Estimates the U.S. school grade level needed to understand the text.</p>
+                  <h3 className="mt-2 font-mono text-5xl font-semibold tracking-[-0.04em] text-foreground" id="grade-level-result">{analysis.gradeLevel!.toFixed(1)}</h3>
                   <p className="mt-3 font-semibold text-foreground">{gradeLevel.label}</p>
                   <p className="mt-1 text-sm leading-6 text-muted">{gradeLevel.description}</p>
                 </section>
@@ -75,6 +81,12 @@ export function ReadabilityAnalyzer({ text, onTextChange, analysis }: Readabilit
                 <Stat label="Characters" value={analysis.characters} />
               </dl>
             </>
+          ) : hasCalculatedResults ? (
+            <div className="flex min-h-64 flex-col justify-center">
+              <p className="text-sm font-semibold tracking-[0.14em] text-muted uppercase">Your results</p>
+              <h3 className="mt-3 text-xl font-semibold text-foreground">Add more text for a clearer estimate.</h3>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-muted">Add at least 20 words for a more meaningful readability estimate. Your sample currently has {analysis.words} {analysis.words === 1 ? "word" : "words"}.</p>
+            </div>
           ) : (
             <div className="flex min-h-64 flex-col justify-center">
               <p className="text-sm font-semibold tracking-[0.14em] text-muted uppercase">Your results</p>

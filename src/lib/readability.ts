@@ -12,6 +12,9 @@ export type ReadabilityInterpretation = {
   description: string;
 };
 
+/** A short sample can produce a valid score without being representative. */
+export const MINIMUM_READABILITY_WORDS = 20;
+
 const WORD_PATTERN = /[a-z]+(?:['’][a-z]+)*/gi;
 const VOWEL_GROUP_PATTERN = /[aeiouy]+/g;
 
@@ -208,4 +211,9 @@ export function analyzeReadability(text: string): ReadabilityAnalysis {
     readingEase: calculateReadingEase(words, sentences, syllables),
     gradeLevel: calculateGradeLevel(words, sentences, syllables),
   };
+}
+
+/** Returns whether an analysis has enough words for a meaningful readability estimate. */
+export function hasMinimumReadabilitySample({ words }: ReadabilityAnalysis): boolean {
+  return words >= MINIMUM_READABILITY_WORDS;
 }

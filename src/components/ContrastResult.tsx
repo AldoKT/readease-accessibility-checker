@@ -51,7 +51,7 @@ function ComplianceGroup({ title, evaluation }: { title: string; evaluation: WCA
 export function ContrastResult({ ratio }: ContrastResultProps) {
   if (ratio === null) {
     return (
-      <section aria-live="polite" aria-labelledby="contrast-result-heading" className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
+      <section aria-labelledby="contrast-result-heading" className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
         <p className="text-xs font-semibold tracking-[0.14em] text-muted uppercase">Contrast ratio</p>
         <h2 className="mt-3 text-xl font-semibold text-foreground" id="contrast-result-heading">Results unavailable</h2>
         <p className="mt-2 text-sm leading-6 text-muted">Correct both color values to view contrast and WCAG results.</p>
@@ -64,7 +64,7 @@ export function ContrastResult({ ratio }: ContrastResultProps) {
   const interpretation = getInterpretation(normalText, largeText);
 
   return (
-    <section aria-live="polite" aria-labelledby="contrast-result-heading" className="rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
+    <section aria-labelledby="contrast-result-heading" className="rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
       <p className="text-xs font-semibold tracking-[0.14em] text-muted uppercase">Contrast ratio</p>
       <h2 className="mt-2 font-mono text-5xl font-semibold tracking-[-0.04em] text-foreground sm:text-6xl" id="contrast-result-heading">{ratio.toFixed(2)} : 1</h2>
 

@@ -19,7 +19,7 @@ export function ColorInput({ id, label, value, colorValue, isValid, onChange }: 
       <div className="flex items-center gap-3">
         <input
           aria-label={`Choose ${label.toLowerCase()} with a color picker`}
-          className="h-12 w-14 shrink-0 cursor-pointer rounded-lg border border-border bg-surface p-1 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+          className="h-12 w-14 shrink-0 cursor-pointer rounded-lg border border-muted bg-surface p-1 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
           onChange={(event) => onChange(event.target.value)}
           type="color"
           value={colorValue}
@@ -28,7 +28,7 @@ export function ColorInput({ id, label, value, colorValue, isValid, onChange }: 
           aria-describedby={helpId}
           aria-invalid={!isValid}
           autoCapitalize="characters"
-          className="h-12 min-w-0 flex-1 rounded-lg border bg-background px-3 font-mono text-base text-foreground shadow-sm outline-none transition-colors focus-visible:border-blue-700 focus-visible:ring-3 focus-visible:ring-blue-100"
+          className="h-12 min-w-0 flex-1 rounded-lg border border-muted bg-background px-3 font-mono text-base text-foreground shadow-sm focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
           id={id}
           onChange={(event) => onChange(event.target.value)}
           spellCheck={false}
@@ -36,7 +36,7 @@ export function ColorInput({ id, label, value, colorValue, isValid, onChange }: 
           value={value}
         />
       </div>
-      <p className={isValid ? "text-sm text-muted" : "text-sm font-medium text-red-700"} id={helpId} role={isValid ? undefined : "alert"}>
+      <p className={isValid ? "text-sm text-muted" : "text-sm font-medium text-red-700"} id={helpId}>
         {isValid ? "Use a 3- or 6-digit hexadecimal color." : "Enter a valid 3- or 6-digit hexadecimal color, such as #123 or #112233."}
       </p>
     </div>

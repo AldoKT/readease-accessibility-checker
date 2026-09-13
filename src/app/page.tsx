@@ -94,9 +94,9 @@ export default function Home() {
             <p className="mt-3 leading-7 text-muted">Enter a foreground and background color to assess their text contrast against WCAG levels.</p>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.8fr)]">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.8fr)]">
             <section aria-label="Color inputs" className="rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
-              <div className="grid gap-7 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-7 sm:grid-cols-2">
                 <ColorInput colorValue={toColorInputValue(foreground)} id="foreground-color" isValid={foregroundRgb !== null} label="Foreground color" onChange={setForeground} value={foreground} />
                 <ColorInput colorValue={toColorInputValue(background)} id="background-color" isValid={backgroundRgb !== null} label="Background color" onChange={setBackground} value={background} />
               </div>
@@ -111,7 +111,7 @@ export default function Home() {
         <PreviewPanel foreground={previewForeground} background={previewBackground} />
         <ReadabilityAnalyzer text={text} onTextChange={setText} analysis={readability} />
         <ColorVisionSimulator background={previewBackground} foreground={previewForeground} />
-        <AccessibilitySummary recommendations={recommendations} />
+        <AccessibilitySummary recommendations={recommendations} readabilityWords={readability.words} />
       </div>
     </main>
   );

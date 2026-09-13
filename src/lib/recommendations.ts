@@ -2,6 +2,7 @@ import type { WCAGEvaluation } from "@/lib/contrast";
 import type { SimulatedContrastEvaluation } from "@/lib/simulatedContrast";
 import {
   getReadingEaseInterpretation,
+  hasMinimumReadabilitySample,
   type ReadabilityAnalysis,
 } from "@/lib/readability";
 
@@ -75,7 +76,12 @@ export function getContrastRecommendation({
 export function getReadabilityRecommendation(
   readability: ReadabilityAnalysis | null | undefined,
 ): AccessibilityRecommendation | null {
-  if (readability?.readingEase === null || readability === null || readability === undefined) {
+  if (
+    readability?.readingEase === null ||
+    readability === null ||
+    readability === undefined ||
+    !hasMinimumReadabilitySample(readability)
+  ) {
     return null;
   }
 

@@ -44,7 +44,7 @@ export function ColorVisionSimulator({
 
       <fieldset className="mt-8">
         <legend className="text-sm font-semibold text-foreground">Simulation mode</legend>
-        <div className="mt-3 flex flex-wrap gap-2" role="group">
+        <div className="mt-3 flex flex-wrap gap-2">
           {MODES.map(({ value, label }) => {
             const isSelected = mode === value;
 
@@ -65,7 +65,7 @@ export function ColorVisionSimulator({
       </fieldset>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.6fr)]">
-        <div aria-live="polite" className="rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
+        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
           {isAvailable ? (
             <article className="rounded-xl border border-border p-6 sm:p-8" style={{ backgroundColor: simulatedBackground, color: simulatedForeground }}>
               <p className="text-xs font-semibold tracking-[0.14em] uppercase opacity-75">Interface label</p>
