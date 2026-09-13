@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ColorInput } from "@/components/ColorInput";
 import { ContrastResult } from "@/components/ContrastResult";
+import { HeroPreview } from "@/components/HeroPreview";
 import { PreviewPanel } from "@/components/PreviewPanel";
 import { contrastRatio, hexToRgb } from "@/lib/contrast";
 
@@ -51,13 +52,16 @@ export default function Home() {
       </header>
 
       <div className="mx-auto max-w-6xl px-5 pb-20 sm:px-8 sm:pb-28">
-        <section aria-labelledby="page-title" className="max-w-3xl py-16 sm:py-24">
-          <p className="text-sm font-semibold tracking-wide text-blue-800 uppercase">Color contrast checker</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground sm:text-6xl" id="page-title">Design for everyone.</h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">ReadEase helps designers and developers evaluate color contrast and make clearer, more inclusive visual choices before shipping.</p>
-          <a className="mt-8 inline-flex min-h-11 items-center justify-center rounded-lg bg-foreground px-5 py-2.5 font-semibold text-background shadow-sm transition-colors hover:bg-zinc-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-blue-700" href="#contrast-checker">
-            Start Checking
-          </a>
+        <section aria-labelledby="page-title" className="grid gap-10 py-14 sm:py-20 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] lg:items-center lg:gap-14">
+          <div>
+            <p className="text-sm font-semibold tracking-wide text-blue-800 uppercase">Color contrast checker</p>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground sm:text-6xl" id="page-title">Design for everyone.</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">ReadEase helps designers and developers evaluate color contrast and make clearer, more inclusive visual choices before shipping.</p>
+            <a className="mt-8 inline-flex min-h-11 items-center justify-center rounded-lg bg-foreground px-5 py-2.5 font-semibold text-background shadow-sm transition-colors hover:bg-zinc-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-blue-700" href="#contrast-checker">
+              Start Checking
+            </a>
+          </div>
+          <HeroPreview background={previewBackground} foreground={previewForeground} ratio={ratio} />
         </section>
 
         <section aria-labelledby="checker-heading" className="scroll-mt-8" id="contrast-checker" tabIndex={-1}>
