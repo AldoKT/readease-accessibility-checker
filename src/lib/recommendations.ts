@@ -1,4 +1,5 @@
 import type { WCAGEvaluation } from "@/lib/contrast";
+import type { SimulatedContrastEvaluation } from "@/lib/simulatedContrast";
 import {
   getReadingEaseInterpretation,
   type ReadabilityAnalysis,
@@ -23,6 +24,7 @@ export type ContrastRecommendationInput = {
 export type AccessibilityRecommendationInput = {
   contrast: ContrastRecommendationInput | null;
   readability?: ReadabilityAnalysis | null;
+  colorVision?: SimulatedContrastEvaluation | null;
 };
 
 /** Uses WCAG evaluations produced by the contrast engine; no ratios or thresholds are recalculated here. */
@@ -121,13 +123,56 @@ export function getReadabilityRecommendation(
 }
 
 /** The simulation informs review; it cannot determine color-vision accessibility on its own. */
-export function getColorVisionRecommendation(): AccessibilityRecommendation {
+export function getColorVisionRecommendation(
+  evaluation?: SimulatedContrastEvaluation | null,
+): AccessibilityRecommendation {
+  const guidance = "Still, avoid relying on color alone to communicate meaning.";
+
+  if (evaluation === null) {
+    return {
+      id: "color-vision-unavailable",
+      category: "color-vision",
+      status: "warning",
+      title: "Simulated contrast unavailable",
+      description: `Enter two valid HEX colors to evaluate simulated text contrast. ${guidance}`,
+    };
+  }
+
+  if (evaluation !== undefined) {
+    const { aggregate } = evaluation;
+    if (aggregate.anyModeFailsLargeTextAA) {
+      return {
+        id: "color-vision-increase-contrast",
+        category: "color-vision",
+        status: "action",
+        title: "Increase contrast across simulation modes",
+        description: `At least one evaluated mode falls below large-text AA contrast. Increase contrast and check again. ${guidance}`,
+      };
+    }
+    if (aggregate.allModesPassNormalTextAA) {
+      return {
+        id: aggregate.allModesPassNormalTextAAA ? "color-vision-contrast-aaa" : "color-vision-contrast-aa",
+        category: "color-vision",
+        status: "good",
+        title: "Text contrast remains sufficient across simulation modes",
+        description: `This pairing retains normal-text ${aggregate.allModesPassNormalTextAAA ? "AAA" : "AA"} contrast across all evaluated modes. ${guidance}`,
+      };
+    }
+    return {
+      id: "color-vision-large-text-only",
+      category: "color-vision",
+      status: "warning",
+      title: "Review normal-text contrast across simulation modes",
+      description: `Some evaluated modes retain AA contrast for large text only. Increase contrast for body text. ${guidance}`,
+    };
+  }
+
   return {
     id: "color-vision-redundant-cues",
     category: "color-vision",
     status: "warning",
     title: "Use more than color to communicate meaning",
-    description: "Compare the interface across simulation modes and pair color with text, icons, patterns, or other cues. Simulations are approximations, not definitive accessibility tests.",
+    description: "Compare simulation modes and pair meaningful colors with text, icons, or patterns.",
   };
 }
 
@@ -144,7 +189,7 @@ export function generateAccessibilityRecommendations(
     recommendations.push(readabilityRecommendation);
   }
 
-  recommendations.push(getColorVisionRecommendation());
+  recommendations.push(getColorVisionRecommendation(input.colorVision));
 
   return recommendations;
 }

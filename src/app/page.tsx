@@ -11,6 +11,7 @@ import { ReadabilityAnalyzer } from "@/components/ReadabilityAnalyzer";
 import { contrastRatio, evaluateWcagContrast, hexToRgb } from "@/lib/contrast";
 import { analyzeReadability } from "@/lib/readability";
 import { generateAccessibilityRecommendations } from "@/lib/recommendations";
+import { evaluateSimulatedContrast } from "@/lib/simulatedContrast";
 
 const DEFAULT_FOREGROUND = "#FFFFFF";
 const DEFAULT_BACKGROUND = "#18181B";
@@ -39,21 +40,28 @@ export default function Home() {
     [foregroundRgb, backgroundRgb],
   );
 
+  const previewForeground = foregroundRgb === null ? null : toColorInputValue(foreground);
+  const previewBackground = backgroundRgb === null ? null : toColorInputValue(background);
+  const colorVision = useMemo(
+    () => previewForeground !== null && previewBackground !== null
+      ? evaluateSimulatedContrast(previewForeground, previewBackground)
+      : null,
+    [previewForeground, previewBackground],
+  );
+
   const recommendations = useMemo(() => generateAccessibilityRecommendations({
     contrast: ratio === null ? null : {
       normalText: evaluateWcagContrast(ratio, "normal"),
       largeText: evaluateWcagContrast(ratio, "large"),
     },
     readability,
-  }), [ratio, readability]);
+    colorVision,
+  }), [ratio, readability, colorVision]);
 
   const handleSwap = () => {
     setForeground(background);
     setBackground(foreground);
   };
-
-  const previewForeground = foregroundRgb === null ? null : toColorInputValue(foreground);
-  const previewBackground = backgroundRgb === null ? null : toColorInputValue(background);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
