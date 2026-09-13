@@ -20,6 +20,12 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Accessibility calculations
+
+The reusable contrast engine is in `src/lib/contrast.ts`. It follows the WCAG calculation pipeline: HEX → RGB → normalized sRGB → linear RGB → relative luminance → contrast ratio → WCAG evaluation. It returns unrounded contrast ratios so presentation code can choose its own display precision.
+
+Automated tests are not configured yet. For this project, Vitest is a suitable lightweight choice for unit-testing the pure functions in `src/lib/contrast.ts`; its setup can be added when the project is ready to adopt a test runner.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
