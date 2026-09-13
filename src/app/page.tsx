@@ -9,6 +9,7 @@ import { HeroPreview } from "@/components/HeroPreview";
 import { PreviewPanel } from "@/components/PreviewPanel";
 import { ReadabilityAnalyzer } from "@/components/ReadabilityAnalyzer";
 import { contrastRatio, evaluateWcagContrast, hexToRgb } from "@/lib/contrast";
+import { recommendForegroundContrast } from "@/lib/colorRecommendations";
 import { analyzeReadability } from "@/lib/readability";
 import { generateAccessibilityRecommendations } from "@/lib/recommendations";
 import { evaluateSimulatedContrast } from "@/lib/simulatedContrast";
@@ -38,6 +39,15 @@ export default function Home() {
       ? contrastRatio(foregroundRgb, backgroundRgb)
       : null,
     [foregroundRgb, backgroundRgb],
+  );
+  const contrastRecommendations = useMemo(
+    () => foregroundRgb !== null && backgroundRgb !== null
+      ? [
+          recommendForegroundContrast(foreground, background, "AA"),
+          recommendForegroundContrast(foreground, background, "AAA"),
+        ]
+      : [],
+    [foreground, background, foregroundRgb, backgroundRgb],
   );
 
   const previewForeground = foregroundRgb === null ? null : toColorInputValue(foreground);
@@ -104,7 +114,7 @@ export default function Home() {
                 Swap colors
               </button>
             </section>
-            <ContrastResult ratio={ratio} />
+            <ContrastResult onApplyRecommendation={setForeground} ratio={ratio} recommendations={contrastRecommendations} />
           </div>
         </section>
 

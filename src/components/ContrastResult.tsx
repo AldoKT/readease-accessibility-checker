@@ -1,6 +1,11 @@
 import { evaluateWcagContrast, type WCAGEvaluation } from "@/lib/contrast";
+import type { ForegroundContrastRecommendation } from "@/lib/colorRecommendations";
 
-type ContrastResultProps = { ratio: number | null };
+type ContrastResultProps = {
+  ratio: number | null;
+  recommendations: readonly ForegroundContrastRecommendation[];
+  onApplyRecommendation: (color: string) => void;
+};
 
 type Interpretation = {
   title: string;
@@ -48,7 +53,7 @@ function ComplianceGroup({ title, evaluation }: { title: string; evaluation: WCA
   );
 }
 
-export function ContrastResult({ ratio }: ContrastResultProps) {
+export function ContrastResult({ ratio, recommendations, onApplyRecommendation }: ContrastResultProps) {
   if (ratio === null) {
     return (
       <section aria-labelledby="contrast-result-heading" className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
@@ -77,6 +82,32 @@ export function ContrastResult({ ratio }: ContrastResultProps) {
         <ComplianceGroup evaluation={normalText} title="Normal text" />
         <ComplianceGroup evaluation={largeText} title="Large text" />
       </div>
+
+      {recommendations.some(({ status }) => status === "recommended") && (
+        <section aria-labelledby="contrast-recommendations-heading" className="mt-7 border-t border-border pt-6">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.14em] text-muted uppercase">Fix my contrast</p>
+            <h3 className="mt-2 text-lg font-semibold text-foreground" id="contrast-recommendations-heading">Adjust the foreground while keeping the background unchanged.</h3>
+          </div>
+          <div className="mt-4 grid gap-3">
+            {recommendations.filter(({ status }) => status === "recommended").map((recommendation) => (
+              <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-background p-4" key={recommendation.target}>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{recommendation.target} suggestion</p>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span aria-hidden="true" className="h-5 w-5 shrink-0 rounded border border-foreground" style={{ backgroundColor: recommendation.recommendedForeground! }} />
+                    <p className="font-mono text-lg font-semibold text-foreground">{recommendation.recommendedForeground}</p>
+                  </div>
+                  <p className="mt-1 text-sm text-muted">{recommendation.contrastRatio!.toFixed(2)} : 1 · Passes {recommendation.target} for normal text</p>
+                </div>
+                <button aria-label={`Apply ${recommendation.recommendedForeground} foreground color for normal text ${recommendation.target}`} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border bg-surface px-4 py-2 font-semibold text-foreground shadow-sm transition-colors hover:bg-zinc-100 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-blue-700" onClick={() => onApplyRecommendation(recommendation.recommendedForeground!)} type="button">
+                  Apply
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </section>
   );
 }
