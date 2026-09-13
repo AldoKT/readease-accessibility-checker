@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ColorInput } from "@/components/ColorInput";
 import { ContrastResult } from "@/components/ContrastResult";
+import { ColorVisionSimulator } from "@/components/ColorVisionSimulator";
 import { HeroPreview } from "@/components/HeroPreview";
 import { PreviewPanel } from "@/components/PreviewPanel";
 import { ReadabilityAnalyzer } from "@/components/ReadabilityAnalyzer";
@@ -88,6 +89,7 @@ export default function Home() {
 
         <PreviewPanel foreground={previewForeground} background={previewBackground} />
         <ReadabilityAnalyzer />
+        <ColorVisionSimulator background={previewBackground} foreground={previewForeground} />
       </div>
     </main>
   );
