@@ -1,13 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { AccessibilitySummary } from "@/components/AccessibilitySummary";
 import { ColorInput } from "@/components/ColorInput";
 import { ContrastResult } from "@/components/ContrastResult";
 import { ColorVisionSimulator } from "@/components/ColorVisionSimulator";
 import { HeroPreview } from "@/components/HeroPreview";
 import { PreviewPanel } from "@/components/PreviewPanel";
 import { ReadabilityAnalyzer } from "@/components/ReadabilityAnalyzer";
-import { contrastRatio, hexToRgb } from "@/lib/contrast";
+import { contrastRatio, evaluateWcagContrast, hexToRgb } from "@/lib/contrast";
+import { analyzeReadability } from "@/lib/readability";
+import { generateAccessibilityRecommendations } from "@/lib/recommendations";
 
 const DEFAULT_FOREGROUND = "#FFFFFF";
 const DEFAULT_BACKGROUND = "#18181B";
@@ -24,6 +27,8 @@ function toColorInputValue(value: string) {
 export default function Home() {
   const [foreground, setForeground] = useState(DEFAULT_FOREGROUND);
   const [background, setBackground] = useState(DEFAULT_BACKGROUND);
+  const [text, setText] = useState("");
+  const readability = useMemo(() => analyzeReadability(text), [text]);
 
   const foregroundRgb = useMemo(() => hexToRgb(foreground), [foreground]);
   const backgroundRgb = useMemo(() => hexToRgb(background), [background]);
@@ -33,6 +38,14 @@ export default function Home() {
       : null,
     [foregroundRgb, backgroundRgb],
   );
+
+  const recommendations = useMemo(() => generateAccessibilityRecommendations({
+    contrast: ratio === null ? null : {
+      normalText: evaluateWcagContrast(ratio, "normal"),
+      largeText: evaluateWcagContrast(ratio, "large"),
+    },
+    readability,
+  }), [ratio, readability]);
 
   const handleSwap = () => {
     setForeground(background);
@@ -88,8 +101,9 @@ export default function Home() {
         </section>
 
         <PreviewPanel foreground={previewForeground} background={previewBackground} />
-        <ReadabilityAnalyzer />
+        <ReadabilityAnalyzer text={text} onTextChange={setText} analysis={readability} />
         <ColorVisionSimulator background={previewBackground} foreground={previewForeground} />
+        <AccessibilitySummary recommendations={recommendations} />
       </div>
     </main>
   );

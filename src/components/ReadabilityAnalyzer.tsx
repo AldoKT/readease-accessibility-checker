@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import {
-  analyzeReadability,
+  type ReadabilityAnalysis,
   getGradeLevelInterpretation,
   getReadingEaseInterpretation,
 } from "@/lib/readability";
@@ -16,9 +15,13 @@ function Stat({ label, value }: { label: string; value: number }) {
   );
 }
 
-export function ReadabilityAnalyzer() {
-  const [text, setText] = useState("");
-  const analysis = useMemo(() => analyzeReadability(text), [text]);
+type ReadabilityAnalyzerProps = {
+  text: string;
+  onTextChange: (text: string) => void;
+  analysis: ReadabilityAnalysis;
+};
+
+export function ReadabilityAnalyzer({ text, onTextChange, analysis }: ReadabilityAnalyzerProps) {
 
   const readingEase = getReadingEaseInterpretation(analysis.readingEase);
   const gradeLevel = getGradeLevelInterpretation(analysis.gradeLevel);
@@ -39,7 +42,7 @@ export function ReadabilityAnalyzer() {
             aria-describedby="readability-help"
             className="mt-4 min-h-64 w-full resize-y rounded-xl border border-border bg-background p-4 text-base leading-7 text-foreground shadow-sm outline-none transition-colors placeholder:text-muted focus-visible:border-blue-700 focus-visible:ring-3 focus-visible:ring-blue-100"
             id="readability-text"
-            onChange={(event) => setText(event.target.value)}
+            onChange={(event) => onTextChange(event.target.value)}
             placeholder="Write or paste text here…"
             value={text}
           />

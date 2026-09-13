@@ -21,7 +21,7 @@ export type ContrastRecommendationInput = {
 };
 
 export type AccessibilityRecommendationInput = {
-  contrast: ContrastRecommendationInput;
+  contrast: ContrastRecommendationInput | null;
   readability?: ReadabilityAnalysis | null;
 };
 
@@ -135,7 +135,9 @@ export function getColorVisionRecommendation(): AccessibilityRecommendation {
 export function generateAccessibilityRecommendations(
   input: AccessibilityRecommendationInput,
 ): AccessibilityRecommendation[] {
-  const recommendations = [getContrastRecommendation(input.contrast)];
+  const recommendations: AccessibilityRecommendation[] = input.contrast === null
+    ? []
+    : [getContrastRecommendation(input.contrast)];
   const readabilityRecommendation = getReadabilityRecommendation(input.readability);
 
   if (readabilityRecommendation !== null) {
